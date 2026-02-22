@@ -1,10 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Routing System...</title>
-    <meta http-equiv="refresh" content="0; url=http://dip-pro.infinityfree.me" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dip.OS | Boot Sequence</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #4ade80;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2rem;
+            margin: 0;
+            overflow: hidden;
+        }
+        #boot-screen {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.5;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+        }
+        .sys-line {
+            margin-bottom: 5px;
+        }
+        .error { color: #ef4444; }
+        .warn { color: #fbbf24; }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2rem;
+            background-color: #4ade80;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
 </head>
-<body style="background: #0f172a; color: #4ade80; font-family: monospace; text-align: center; padding-top: 20%;">
-    <p>>_ Establishing secure connection to terminal...</p>
+<body>
+
+    <div id="boot-screen">
+        </div>
+
+    <script>
+        const targetUrl = "http://dip-pro.infinityfree.me";
+        
+        const bootSequence = [
+            "Dip BIOS version 2.04.1",
+            "Copyright (C) Engineered by Dip",
+            " ",
+            "Initializing Dip.OS Kernel v4.19.0-22...",
+            "Loading base drivers... [ OK ]",
+            "Mounting virtual file systems... [ OK ]",
+            "Checking memory sectors... 16384M OK",
+            "<span class='warn'>WARNING: Unauthorized access attempt blocked.</span>",
+            "Bypassing standard security protocols... [ SUCCESS ]",
+            "Loading AI Matrix endpoints... [ OK ]",
+            "Connecting to external POS databases... [ OK ]",
+            " ",
+            ">_ Establishing secure connection to master terminal...",
+            "Handshake verified.",
+            "Redirecting..."
+        ];
+
+        const bootScreen = document.getElementById('boot-screen');
+        let currentLine = 0;
+
+        function renderBoot() {
+            if (currentLine < bootSequence.length) {
+                // Remove the cursor from the previous line if it exists
+                const oldCursor = document.querySelector('.cursor');
+                if (oldCursor) oldCursor.remove();
+
+                // Create the new line
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'sys-line';
+                lineDiv.innerHTML = bootSequence[currentLine] + "<span class='cursor'></span>";
+                
+                bootScreen.appendChild(lineDiv);
+                
+                // Randomize the typing speed for realism (50ms to 400ms)
+                let delay = Math.random() * 350 + 50;
+                
+                // Add longer pauses for dramatic effect on certain lines
+                if (bootSequence[currentLine].includes("Bypassing")) delay = 800;
+                if (bootSequence[currentLine].includes("secure connection")) delay = 1200;
+
+                currentLine++;
+                setTimeout(renderBoot, delay);
+            } else {
+                // Sequence finished, execute the redirect
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 500);
+            }
+        }
+
+        // Start the boot sequence shortly after page load
+        setTimeout(renderBoot, 500);
+    </script>
 </body>
 </html>
